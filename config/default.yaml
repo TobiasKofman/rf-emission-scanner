@@ -1,0 +1,76 @@
+# Default config. To tune, copy this to config/local.yaml (gitignored) and edit that.
+# local.yaml gets picked up automatically if it exists, or pass -c <file>.
+# Anything left out falls back to the defaults in rfsense/config.py.
+
+source:
+  kind: pluto  # pluto, file or sim
+  uri: "ip:192.168.2.1"  # or usb:x.y.z, check `iio_info -s`
+  file_path: null  # only for kind=file, a .npy from tools/capture.py
+  # one pass over this list is one update. 16 MHz steps so the 20 MHz captures overlap
+  # and cover 2400-2484
+  center_freqs_mhz: [2410.0, 2426.0, 2442.0, 2458.0, 2474.0]
+  sample_rate_msps: 20.0
+  rf_bandwidth_mhz: 20.0
+  buffer_size: 65536  # ~3.3 ms at 20 MSPS, keeps the full sweep around 40 ms
+  gain_mode: manual  # manual, slow_attack, fast_attack
+  gain_db: 40.0  # TODO tune on hardware
+  full_scale: 2048.0  # 12 bit ADC
+
+sim:
+  scenario: fhss  # noise, fhss, bluetooth, wideband, mixed
+  noise_dbfs: -60.0
+  signal_dbfs: -45.0
+  gap_ms: 5.0  # fake USB dead time between buffers
+  seed: 0
+
+dsp:
+  nfft: 256
+  hop: 128
+  window: hann
+
+detect:
+  threshold_db: 10.0  # above noise floor
+  noise_percentile: 25.0
+  noise_alpha: 0.1  # smoothing of the floor between captures
+  floor_spread_db: 3.0  # max an LO's floor can sit above the quietest LO, check on hardware
+  dc_notch_bins: 1  # LO leakage spike in the middle
+  # dilation size for joining pieces of the same burst
+  merge_frames: 3
+  merge_bins: 3
+  # anything smaller than this gets dropped (10 frames is ~64us)
+  min_frames: 10
+  min_bins: 2
+  dynamic_range_db: 35.0  # below the frame's peak by more than this = FFT leakage
+  occupied_power: 0.9  # bandwidth is the part holding this share of the burst's power
+  ofdm_min_bw_mhz: 8.0  # only check bursts this wide for the Wi-Fi fingerprint
+
+classify:
+  window_s: 1.0
+  narrow_max_bw_mhz: 5.0
+  wide_min_bw_mhz: 8.0
+  channel_res_mhz: 1.0  # bursts closer than this count as the same channel
+  fhss_min_bursts: 6
+  fhss_min_channels: 8
+  fhss_min_hop_rate_hz: 20.0
+  fhss_bw_range_mhz: [0.3, 4.0]
+  bt_max_burst_ms: 0.5  # shorter median burst = probably bluetooth
+  wide_min_duty: 0.2  # non Wi-Fi only, tuned on DroneRF (Phantom is 0.3 to 0.5)
+  wifi_min_corr: 0.10  # 3.2 us OFDM correlation above this = Wi-Fi
+  warning_conf: 0.5
+  critical_conf: 0.75
+  rssi_cal_db: 0.0  # not calibrated yet
+
+report:
+  min_alert: warning  # don't send anything below this
+  confirm_count: 3
+  report_interval_s: 1.0
+  stats_interval_s: 5.0  # 0 to turn off the stats log
+  save_iq_dir: null  # set to e.g. captures/detections to save IQ for each event
+
+output:
+  sinks: [stdout, serial]  # stdout, serial, udp, file
+  serial_port: /dev/ttyUSB0  # could also be ttyACM0 depending on the board
+  serial_baud: 115200
+  udp_host: 192.168.4.1
+  udp_port: 5005
+  file_path: logs/events.jsonl

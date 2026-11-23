@@ -1,0 +1,25 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.pytest_cache/
+build/
+dist/
+
+# Data produced at runtime, can be large
+captures/
+logs/
+*.npy
+*.png
+
+# Local config overrides
+config/local.yaml
+
+# Private session notes / progress tracker
+.progress.md
+
+# Editors / OS
+.DS_Store
+.vscode/
