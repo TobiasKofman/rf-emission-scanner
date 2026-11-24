@@ -1,0 +1,4 @@
+{"type":"detection","ts":"2026-11-13T14:32:02Z","alert":"green","label":"background","confidence":0.95,"rssi_dbm":-94.0,"center_mhz":2440.0,"bw_mhz":0.2,"duration_ms":5.0}
+{"type":"detection","ts":"2026-11-13T14:32:03Z","alert":"yellow","label":"unclassified-energy","confidence":0.31,"rssi_dbm":-78.0,"center_mhz":2426.0,"bw_mhz":1.0,"duration_ms":20.0}
+{"type":"detection","ts":"2026-11-13T14:32:04Z","alert":"red","label":"FHSS/control-link-like","confidence":0.67,"rssi_dbm":-64.0,"center_mhz":2438.0,"bw_mhz":1.8,"duration_ms":90.0}
+{"type":"detection","ts":"2026-11-13T14:32:05Z","alert":"critical","label":"FHSS/control-link-like","confidence":0.82,"rssi_dbm":-58.0,"center_mhz":2440.0,"bw_mhz":2.0,"duration_ms":100.0}

@@ -23,3 +23,5 @@ config/local.yaml
 # Editors / OS
 .DS_Store
 .vscode/
+
+.pio/
